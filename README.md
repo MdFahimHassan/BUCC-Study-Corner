@@ -1,4 +1,4 @@
-# BUCC Study Corner - MERN Educational Video Platform
+# BUCC Study Corner - Educational Video Platform
 
 BUCC Study Corner is an industry-standard full-stack web application designed for curated educational video sharing. The platform features a robust Express.js backend with JWT-secured endpoints and MongoDB integration, alongside a responsive React.js frontend styled with a custom, artistic Soft Neo-Brutalism design system.
 
