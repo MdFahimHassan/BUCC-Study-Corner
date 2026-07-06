@@ -20,7 +20,7 @@ export default function Navbar() {
       <div className="navbar-container">
         <Link to="/" className="navbar-logo">
           <span className="logo-icon">🎓</span>
-          <span className="logo-text glow-text">BUCC Study Corner</span>
+          <span className="logo-text glow-text">Study Corner</span>
         </Link>
         <div className="navbar-auth">
           {user ? (

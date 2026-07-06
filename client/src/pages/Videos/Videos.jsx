@@ -58,7 +58,7 @@ export default function Videos() {
         <header className="hero-section">
           <h1 className="hero-title">Expand Your Knowledge</h1>
           <p className="hero-subtitle">
-            Explore curated educational resources, tutorials, and seminars at <span className="glow-text">BUCC Study Corner</span>.
+            Explore curated educational resources, tutorials, and seminars at <span className="glow-text">Study Corner</span>.
           </p>
         </header>
 
