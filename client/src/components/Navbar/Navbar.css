@@ -1,0 +1,171 @@
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  padding: 24px 0;
+  background: transparent;
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 16px;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+}
+
+.logo-icon {
+  font-size: 1.8rem;
+}
+
+.navbar-auth {
+  display: flex;
+  align-items: center;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.user-name {
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 0.95rem;
+  font-family: var(--font-mono);
+}
+
+/* Hover Dropdown Layout for Admin */
+.admin-nav-group {
+  position: relative;
+  display: inline-block;
+}
+
+.admin-btn {
+  font-size: 0.85rem;
+  padding: 10px 16px;
+}
+
+.admin-btn-highlight {
+  background: var(--accent-mint) !important;
+  color: var(--border-dark) !important;
+}
+
+.admin-nav-group:hover .admin-btn {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0px var(--border-dark);
+}
+
+.admin-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 140px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-dark);
+  border-radius: 12px;
+  padding: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 4px 4px 0px var(--border-dark);
+  z-index: 200;
+}
+
+.admin-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 0;
+  width: 100%;
+  height: 12px;
+  background: transparent;
+}
+
+.admin-nav-group:hover .admin-dropdown {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.dropdown-logout-btn {
+  width: 100%;
+  padding: 8px 12px;
+  background: #ffe4e6;
+  border: 2px solid var(--border-dark);
+  border-radius: 8px;
+  color: var(--accent-rose);
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-align: center;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: var(--transition-bounce);
+  box-shadow: 2px 2px 0px var(--border-dark);
+}
+
+.dropdown-logout-btn:hover {
+  background: var(--accent-rose);
+  color: #ffffff;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--border-dark);
+}
+
+.logout-btn {
+  padding: 10px 16px;
+  font-size: 0.85rem;
+}
+
+.auth-buttons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.login-link {
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 8px 16px;
+}
+
+.login-link:hover {
+  color: var(--text-main);
+}
+
+.signup-btn {
+  padding: 10px 16px;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 16px 0;
+  }
+  
+  .user-profile {
+    gap: 8px;
+  }
+  
+  .user-name {
+    display: none;
+  }
+}
