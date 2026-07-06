@@ -149,3 +149,50 @@ ADMIN_SIGNUP_SECRET=your_admin_registration_password_secret
     ```
 
 Open your browser to `http://localhost:5173` to test the application!
+
+---
+
+## 6. Live Demonstration Tour
+
+Below is a step-by-step visual demonstration of the system workflows:
+
+### 1. Unauthenticated Visitor Landing Page (Startup)
+When a user first lands on the platform, they see a clean, distraction-free landing page with authentication controls in the top-right and a videos list (currently empty).
+
+![Startup Landing Page](demo/01-startup-page.png)
+
+### 2. Administrator & Student Registration
+Visitors can create a student account or toggle the administrator checkbox to register with the secure signup key from system configurations.
+
+![Registration Page](demo/02-signup-page.png)
+
+### 3. User Authentication
+A clean, secure card-based interface handles JWT session generation for students and administrators.
+
+![Login Page](demo/03-login-page.png)
+
+### 4. Admin CMS Dashboard (Empty state)
+Once logged in, administrators can access a split-screen dashboard workspace to manage resources.
+
+![Empty Admin Dashboard](demo/04-admin-dashboard-empty.png)
+
+### 5. Resource Publication
+Adding a valid YouTube link automatically extracts details to generate video cards and high-resolution thumbnail graphics.
+
+![Populated Admin Dashboard](demo/05-admin-dashboard-added.png)
+
+### 6. Admin Home Catalogue View
+Administrators are redirected to the homepage on login, where the vibrant *Admin Dashboard* button appears in the top-right header.
+
+![Admin Homepage](demo/06-admin-homepage.png)
+
+### 7. Hover-Based Session Control
+Hovering over the *Admin Dashboard* button triggers a smooth dropdown listing the session termination options.
+
+![Hover Dropdown Logout](demo/07-admin-logout-hover.png)
+
+### 8. Student Home Catalogue View
+Authenticated students land on the home catalog showing the custom-bordered video grid, sorting selectors, and a direct logout action button.
+
+![Student Homepage](demo/08-user-homepage.png)
+

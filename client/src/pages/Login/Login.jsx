@@ -24,11 +24,7 @@ export default function Login() {
       setAccessToken(accessToken);
       setUser(user);
 
-      if (user.role === "admin") {
-        navigate("/admin");
-      } else {
-        navigate("/");
-      }
+      navigate("/");
     } catch (err) {
       setError(err.message || "Invalid email or password");
     } finally {
