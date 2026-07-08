@@ -24,9 +24,25 @@ const connectDB = async () => {
   }
 
   if (!cached.promise) {
+    // The server-selection timeout defaults to 30s, which exceeds Vercel's
+    // 10s serverless function timeout for the Hobby plan. When the cluster's
+    // primary replica is briefly unreachable (or a node hasn't elected fast
+    // enough), Mongoose sits waiting past Vercel's kill switch and returns
+    // FUNCTION_INVOCATION_FAILED. Tighter timeouts fail fast and let Vercel
+    // retry on a fresh instance.
+    // If the connect fails, we clear `cached.promise` so the next request
+    // gets a fresh attempt instead of replaying the same rejected promise.
     cached.promise = mongoose
-      .connect(process.env.MONGO_URI, { bufferCommands: false })
-      .then((mongoose) => mongoose);
+      .connect(process.env.MONGO_URI, {
+        bufferCommands: false,
+        serverSelectionTimeoutMS: 5000,
+        socketTimeoutMS: 10000,
+      })
+      .then((mongoose) => mongoose)
+      .catch((err) => {
+        cached.promise = null;
+        throw err;
+      });
   }
 
   cached.conn = await cached.promise;
