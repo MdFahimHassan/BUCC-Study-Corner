@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
@@ -54,20 +53,3 @@ userSchema.pre('save', async function (next) {
 const User = mongoose.model('User', userSchema);
 
 export default User;
-=======
-const mongoose = require('mongoose');
-
-const userSchema = new mongoose.Schema({
-    username: { 
-        type: String, 
-        required: [true, 'Username is required'], 
-        unique: true 
-    },
-    password: { 
-        type: String, 
-        required: [true, 'Password is required'] 
-    }
-});
-
-module.exports = mongoose.model('User', userSchema);
->>>>>>> Stashed changes

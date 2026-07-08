@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 import express from 'express';
 import {
   postVideo,
@@ -17,13 +16,3 @@ router.route('/:id')
   .delete(protect, admin, deleteVideo);
 
 export default router;
-=======
-const express = require('express');
-const router = express.Router();
-const { getVideos, addVideo } = require('../controllers/videoController');
-
-router.get('/', getVideos);  
-router.post('/', addVideo);  
-
-module.exports = router;
->>>>>>> Stashed changes

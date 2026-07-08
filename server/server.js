@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -50,12 +49,3 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
 });
-=======
-//added by shahriar
-const express = require('express');
-const router = express.Router();
-
-// route linkings
-app.use('/api/videos', require('./routes/videoRoutes'));
-app.use('/api/auth', require('./routes/authRoutes'));
->>>>>>> Stashed changes
