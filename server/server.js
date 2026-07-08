@@ -8,8 +8,11 @@ import videoRoutes from './routes/videoRoutes.js';
 // Load environment variables
 dotenv.config();
 
-// Connect to MongoDB
-connectDB();
+// Connect to MongoDB. We `await` here at module-load time so that no
+// incoming request can reach a controller before the connection is ready.
+// On Vercel's serverless platform, the function module is imported once
+// per cold start; awaiting here is the safe place to block.
+await connectDB();
 
 const app = express();
 
