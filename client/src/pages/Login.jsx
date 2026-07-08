@@ -1,77 +1,142 @@
-import React from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { LockKeyhole, ShieldCheck, Sparkles, User2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowLeft, Sparkles, KeyRound, Mail } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-export default function Login({ onLogin, email, setEmail, password, setPassword, error }) {
-  const [searchParams] = useSearchParams();
-  const role = searchParams.get('role') || 'user';
-  const isAdmin = role === 'admin';
+const Login = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError('');
+    
+    if (!email || !password) {
+      setError('⚡ Access Denied: Please fill out all authentication gates.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    // Simulate interactive authentication delay flow
+    setTimeout(() => {
+      setIsSubmitting(false);
+      console.log('Demo Login Initiated:', { email, password });
+      navigate('/admin'); // Move smoothly to admin view on demo click
+    }, 1200);
+  };
 
   return (
-    <section className="mx-auto flex min-h-[78vh] max-w-7xl items-center justify-center px-5 py-20 sm:px-8">
-      <div className="grid w-full gap-8 lg:grid-cols-[1.05fr_0.95fr]">
-        <div className="glass-panel p-8 sm:p-10">
-          <p className="font-mono text-xs uppercase tracking-[0.35em] text-cyan-300">// {isAdmin ? 'ADMIN ACCESS' : 'USER ACCESS'}</p>
-          <h1 className="mt-4 text-4xl font-semibold text-white sm:text-5xl">
-            {isAdmin ? 'Admin sign in' : 'User sign in'}
-          </h1>
-          <p className="mt-4 max-w-xl text-base leading-8 text-slate-400">
-            {isAdmin
-              ? 'Log in as admin to publish and manage content across the BUCC Study Corner library.'
-              : 'Log in as a learner to access the public dashboard and play videos directly inside the portal.'}
-          </p>
+    <div className="min-h-screen bg-[#0d0c1d] bg-[radial-gradient(#1f1d3a_1px,transparent_1px)] [background-size:20px_20px] flex flex-col items-center justify-center p-4 font-sans text-white select-none">
+      
+      {/* Back Button with hover sliding animation */}
+      <button 
+        onClick={() => navigate('/')} 
+        className="group flex items-center gap-2 text-gray-400 hover:text-[#5ce1e6] transition-all duration-300 mb-8 text-xs font-bold tracking-widest uppercase cursor-pointer"
+      >
+        <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+        Back to Study Corner
+      </button>
 
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-400/10 text-cyan-300">
-                <ShieldCheck className="h-5 w-5" />
-              </div>
-              <p className="mt-3 font-semibold text-white">Secure experience</p>
-              <p className="mt-1 text-sm text-slate-400">Credentials keep admin actions separate from learners.</p>
+      {/* Interactive Main Form Container */}
+      <div className="relative w-full max-w-md group/card">
+        {/* Pulsing colored glow backdrop layer */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#7c83fd] to-[#fbc5b3] rounded-2xl translate-x-2 translate-y-2 opacity-60 group-hover/card:translate-x-2.5 group-hover/card:translate-y-2.5 transition-transform duration-300 -z-10 blur-[2px]"></div>
+        
+        {/* Structural Form Wrapper Card */}
+        <div className="w-full bg-[#161527] border border-[#2b2a42] rounded-2xl p-8 md:p-10 shadow-2xl backdrop-blur-md">
+          
+          {/* Header */}
+          <div className="text-center mb-8 relative">
+            <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[#f3d371] animate-bounce duration-1000">
+              <Sparkles size={20} />
             </div>
-            <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-400/10 text-violet-300">
-                <Sparkles className="h-5 w-5" />
-              </div>
-              <p className="mt-3 font-semibold text-white">Instant access</p>
-              <p className="mt-1 text-sm text-slate-400">Enter your credentials and continue into your assigned workspace.</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="glass-panel p-8 sm:p-10">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-400/10 text-cyan-300">
-              {isAdmin ? <LockKeyhole className="h-5 w-5" /> : <User2 className="h-5 w-5" />}
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold text-white">Enter your details</h2>
-              <p className="text-sm text-slate-400">Role: {isAdmin ? 'Admin' : 'User'} portal</p>
-            </div>
+            <h1 className="text-4xl font-black tracking-tight bg-gradient-to-r from-[#b19ffa] via-[#ecb09d] to-[#fbc5b3] bg-clip-text text-transparent drop-shadow-md">
+              Welcome Back
+            </h1>
+            <p className="text-gray-400 text-xs mt-2 tracking-wide font-medium">
+              Sign in to unleash your administrative dashboard power.
+            </p>
           </div>
 
-          <form onSubmit={(event) => onLogin(event, role)} className="mt-8 space-y-4">
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder={isAdmin ? 'admin@bucc.com' : 'your.email@example.com'}
-              className="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-slate-100 outline-none placeholder:text-slate-500"
-            />
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder={isAdmin ? 'studycorner' : 'password'}
-              className="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-slate-100 outline-none placeholder:text-slate-500"
-            />
-            {error ? <p className="text-sm text-rose-300">{error}</p> : null}
-            <button type="submit" className="w-full rounded-full bg-gradient-to-r from-cyan-400 to-indigo-500 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:opacity-90">
-              Continue as {isAdmin ? 'admin' : 'user'}
+          {/* Validation Alert Box */}
+          {error && (
+            <div className="mb-6 p-3 bg-red-950/40 border border-red-500/50 rounded-xl text-red-400 text-xs font-semibold text-center tracking-wide animate-shake">
+              {error}
+            </div>
+          )}
+
+          {/* Form Content Block */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            
+            {/* Email Field with internal icon placement */}
+            <div className="space-y-2">
+              <label className="block text-xs font-black tracking-widest text-gray-300 uppercase pl-1">
+                Email Address
+              </label>
+              <div className="relative group/input">
+                <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within/input:text-[#7c83fd] transition-colors" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@example.com"
+                  className="w-full bg-[#0d0c1d] border border-[#2d2c45] rounded-xl pl-12 pr-4 py-3.5 text-sm text-gray-100 placeholder-gray-600 focus:outline-none focus:border-[#7c83fd] focus:ring-2 focus:ring-[#7c83fd]/20 transition-all duration-300 font-medium"
+                />
+              </div>
+            </div>
+
+            {/* Password Field with internal icon placement */}
+            <div className="space-y-2">
+              <label className="block text-xs font-black tracking-widest text-gray-300 uppercase pl-1">
+                Password
+              </label>
+              <div className="relative group/input">
+                <KeyRound size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within/input:text-[#7c83fd] transition-colors" />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full bg-[#0d0c1d] border border-[#2d2c45] rounded-xl pl-12 pr-4 py-3.5 text-sm text-gray-100 placeholder-gray-600 focus:outline-none focus:border-[#7c83fd] focus:ring-2 focus:ring-[#7c83fd]/20 transition-all duration-300"
+                />
+              </div>
+            </div>
+
+            {/* Premium Button Action with loading time-flow sequence */}
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full relative overflow-hidden bg-[#f3d371] hover:bg-[#f5da87] text-[#0d0c1d] font-black text-xs tracking-widest uppercase py-4 rounded-xl border border-black shadow-[0_4px_14px_rgba(243,211,113,0.3)] transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] disabled:opacity-50 cursor-pointer group/btn"
+            >
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                {isSubmitting ? (
+                  <div className="w-4 h-4 border-2 border-[#0d0c1d] border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  'Sign In'
+                )}
+              </span>
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300"></div>
             </button>
           </form>
+
+          {/* Registration Helper Footer link */}
+          <div className="text-center mt-8 text-xs text-gray-400 font-medium">
+            New to Study Corner?{' '}
+            <button 
+              onClick={() => console.log('Redirecting registration')} 
+              className="text-[#5ce1e6] hover:text-[#42cfd4] hover:underline font-extrabold tracking-wide transition-colors"
+            >
+              Create an account
+            </button>
+          </div>
+
         </div>
       </div>
-    </section>
+    </div>
   );
-}
+};
+
+export default Login;
