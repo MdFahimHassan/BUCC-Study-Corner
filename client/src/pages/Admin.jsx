@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Trash2, Wrench, PlusCircle, ArrowUpRight, FolderOpen, Radio, Database } from 'lucide-react';
+import { addVideo, loadVideos, removeVideo } from '../lib/videos.js';
 
 const Admin = () => {
-  // 1. Initial Interactive Video State
-  const [videos, setVideos] = useState([
-    { id: '1', title: 'Cse110 lecture 1', youtubeId: 'hBg3njn56Z0', publishedDate: '7 Jul 2026' }
-  ]);
+  const [videos, setVideos] = useState([]);
 
   // Form Field Local States
   const [title, setTitle] = useState('');
@@ -14,13 +12,47 @@ const Admin = () => {
   const [error, setError] = useState('');
   const [isPublishing, setIsPublishing] = useState(false);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    loadVideos().then((list) => {
+      if (cancelled) return;
+      setVideos(list.map((video) => ({
+        ...video,
+        id: video.id ?? video._id,
+        youtubeId: video.youtubeId || extractYouTubeId(video.url || ''),
+        publishedDate: formatPublishedDate(video.createdAt || video.publishedDate),
+      })));
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const extractYouTubeId = (urlStr) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = urlStr.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
   };
 
-  const handleSubmit = (e) => {
+  const formatPublishedDate = (value) => {
+    if (!value) {
+      return new Date().toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      });
+    }
+
+    return new Date(value).toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess(false);
@@ -38,30 +70,39 @@ const Admin = () => {
 
     setIsPublishing(true);
 
-    // Simulated Submission Time-Flow sequence
-    setTimeout(() => {
-      const newVideo = {
-        id: Date.now().toString(),
+    try {
+      const newVideo = await addVideo({
         title: title.trim(),
-        youtubeId: ytId,
-        publishedDate: new Date().toLocaleDateString('en-GB', {
-          day: 'numeric',
-          month: 'short',
-          year: 'numeric'
-        })
+        url,
+        category: 'General',
+      });
+
+      const normalizedVideo = {
+        ...newVideo,
+        id: newVideo.id ?? newVideo._id,
+        youtubeId: newVideo.youtubeId || ytId,
+        publishedDate: formatPublishedDate(newVideo.createdAt),
       };
 
-      setVideos([newVideo, ...videos]);
+      setVideos((prev) => [normalizedVideo, ...prev]);
       setTitle('');
       setUrl('');
-      setIsPublishing(false);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 4000);
-    }, 1100);
+    } catch (err) {
+      setError(err.message || 'Unable to publish the resource right now.');
+    } finally {
+      setIsPublishing(false);
+    }
   };
 
-  const handleDelete = (idToDelete) => {
-    setVideos(videos.filter(video => video.id !== idToDelete));
+  const handleDelete = async (idToDelete) => {
+    try {
+      await removeVideo(idToDelete);
+      setVideos((prev) => prev.filter((video) => String(video.id) !== String(idToDelete)));
+    } catch (err) {
+      setError(err.message || 'Unable to delete the resource right now.');
+    }
   };
 
   return (
