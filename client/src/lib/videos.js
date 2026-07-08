@@ -6,22 +6,52 @@ import {
 import { getSession } from './auth.js';
 
 /**
- * Returns the list of videos from the backend. Falls back to an empty
- * list if the request fails (e.g. backend unreachable on first load).
+ * Static fallback data from your initial project files.
+ * This ensures the UI works even if the backend is offline.
+ */
+export const FALLBACK_VIDEOS = [
+  {
+    id: 1,
+    title: "React Basics",
+    category: "Frontend",
+    description: "Learn React fundamentals",
+    url: "https://www.youtube.com/watch?v=SqcY0GlETPk"
+  },
+  {
+    id: 2,
+    title: "Linked List",
+    category: "DSA",
+    instructor: "Abdul Bari",
+    description: "Complete linked list tutorial.",
+    url: "https://www.youtube.com/watch?v=NobHlGUjV3g"
+  },
+  {
+    id: 3,
+    title: "SQL Basics",
+    category: "Database",
+    instructor: "FreeCodeCamp",
+    description: "Learn SQL step by step.",
+    url: "https://www.youtube.com/watch?v=HXV3zeQKqGY"
+  }
+];
+
+/**
+ * Returns the list of videos from the backend. 
+ * Falls back to FALLBACK_VIDEOS if the request fails.
  */
 export async function loadVideos() {
   try {
-    return await apiFetchVideos();
+    const data = await apiFetchVideos();
+    // Return API data if it exists, otherwise fallback
+    return data && data.length > 0 ? data : FALLBACK_VIDEOS;
   } catch (error) {
-    console.warn('Failed to load videos from backend:', error.message);
-    return [];
+    console.warn('Backend unreachable, using fallback data:', error.message);
+    return FALLBACK_VIDEOS;
   }
 }
 
 /**
  * Creates a new video. Requires an authenticated admin session.
- * The backend's POST /api/videos enforces this via the protect + admin
- * middleware, so we forward the JWT.
  */
 export async function addVideo(video) {
   const session = getSession();
@@ -41,9 +71,3 @@ export async function removeVideo(id) {
   }
   return apiDeleteVideo(id, session.token);
 }
-
-// Backwards-compatible fallbacks. The pre-wired components used these
-// for localStorage-only demo data. We keep them so a freshly-loaded
-// page never crashes if the API is slow or down — Dashboard / Home
-// can render with `[]` until the real fetch resolves.
-export const FALLBACK_VIDEOS = [];

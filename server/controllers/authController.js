@@ -1,8 +1,22 @@
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
+import {
+  createMemoryUser,
+  findMemoryUserByEmail,
+  findMemoryUserById,
+  isMemoryStoreEnabled,
+} from '../config/storage.js';
 
 const generateToken = (id) =>
-  jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+  jwt.sign({ id }, process.env.JWT_SECRET || 'dev-secret', { expiresIn: '30d' });
+
+const normalizeUser = (user) => ({
+  _id: user._id,
+  name: user.name,
+  email: user.email,
+  role: user.role,
+});
 
 export const registerUser = async (req, res) => {
   const { name, email, password, departmentReference } = req.body;
@@ -14,6 +28,22 @@ export const registerUser = async (req, res) => {
   }
 
   try {
+    if (isMemoryStoreEnabled()) {
+      const existing = await findMemoryUserByEmail(email);
+      if (existing) {
+        return res.status(400).json({ message: 'User already exists' });
+      }
+
+      const user = await createMemoryUser({ name, email, password, role });
+      if (user) {
+        return res.status(201).json({
+          ...normalizeUser(user),
+          token: generateToken(user._id),
+        });
+      }
+      return res.status(400).json({ message: 'Invalid user data' });
+    }
+
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
@@ -23,10 +53,7 @@ export const registerUser = async (req, res) => {
 
     if (user) {
       res.status(201).json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
+        ...normalizeUser(user),
         token: generateToken(user._id),
       });
     } else {
@@ -41,14 +68,22 @@ export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
+    if (isMemoryStoreEnabled()) {
+      const user = await findMemoryUserByEmail(email);
+      if (user && (await bcrypt.compare(password, user.password))) {
+        return res.json({
+          ...normalizeUser(user),
+          token: generateToken(user._id),
+        });
+      }
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
       res.json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
+        ...normalizeUser(user),
         token: generateToken(user._id),
       });
     } else {
@@ -61,15 +96,18 @@ export const loginUser = async (req, res) => {
 
 export const getUserProfile = async (req, res) => {
   try {
+    if (isMemoryStoreEnabled()) {
+      const user = await findMemoryUserById(req.user._id);
+      if (user) {
+        return res.json(normalizeUser(user));
+      }
+      return res.status(404).json({ message: 'User not found' });
+    }
+
     const user = await User.findById(req.user._id);
 
     if (user) {
-      res.json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      });
+      res.json(normalizeUser(user));
     } else {
       res.status(404).json({ message: 'User not found' });
     }

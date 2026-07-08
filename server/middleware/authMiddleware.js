@@ -1,9 +1,11 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import { findMemoryUserById, isMemoryStoreEnabled } from '../config/storage.js';
 
 // Protect routes - Verify JWT token
 export const protect = async (req, res, next) => {
   let token;
+  const jwtSecret = process.env.JWT_SECRET || 'dev-secret';
 
   // Check for token in Authorization header (Bearer token)
   if (
@@ -15,10 +17,14 @@ export const protect = async (req, res, next) => {
       token = req.headers.authorization.split(' ')[1];
 
       // Verify token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, jwtSecret);
 
-      // Get user from the database using ID in the token, excluding the password field
-      req.user = await User.findById(decoded.id).select('-password');
+      if (isMemoryStoreEnabled()) {
+        req.user = await findMemoryUserById(decoded.id);
+      } else {
+        // Get user from the database using ID in the token, excluding the password field
+        req.user = await User.findById(decoded.id).select('-password');
+      }
 
       if (!req.user) {
         return res.status(401).json({ message: 'Not authorized, user not found' });

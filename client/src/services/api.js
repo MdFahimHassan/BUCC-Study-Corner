@@ -26,12 +26,13 @@ function authHeaders(token) {
   return { Authorization: `Bearer ${token}` };
 }
 
-async function request(path, { method = 'GET', body, token } = {}) {
+async function request(path, { method = 'GET', body, token, headers = {} } = {}) {
   const res = await fetch(`${API_BASE_URL}${path}`, {
     method,
     headers: {
       'Content-Type': 'application/json',
       ...authHeaders(token),
+      ...headers,
     },
     body: body ? JSON.stringify(body) : undefined,
   });

@@ -1,31 +1,30 @@
-import React, { useState } from 'react';
-import { ArrowLeft, Sparkles, KeyRound, Mail, ShieldCheck } from 'lucide-react';
+import React from 'react';
+import { ArrowLeft, KeyRound, Mail, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
+const Login = ({
+  onSubmit,
+  email,
+  setEmail,
+  password,
+  setPassword,
+  name,
+  setName,
+  mode,
+  setMode,
+  error,
+  submitting,
+}) => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    setError('');
-    
-    if (!email || !password) {
-      setError('⚡ ACCESS DENIED: PLEASE FILL OUT ALL AUTHENTICATION GATES.');
+    if (onSubmit) {
+      onSubmit(e, 'user');
       return;
     }
 
-    setIsSubmitting(true);
-    
-    // Simulate interactive authentication delay
-    setTimeout(() => {
-      setIsSubmitting(false);
-      // Add real auth logic here
-      navigate('/admin'); 
-    }, 1200);
+    e.preventDefault();
+    navigate('/dashboard');
   };
 
   return (
@@ -66,8 +65,41 @@ const Login = () => {
             </div>
           )}
 
+          <div className="mb-6 flex rounded-xl border border-[#2b2a42] bg-[#090814] p-1">
+            <button
+              type="button"
+              onClick={() => setMode && setMode('login')}
+              className={`flex-1 rounded-lg px-3 py-2 text-[10px] font-black uppercase tracking-[0.2em] transition ${mode === 'login' ? 'bg-[#f3d371] text-[#090814]' : 'text-gray-400'}`}
+            >
+              Login
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode && setMode('register')}
+              className={`flex-1 rounded-lg px-3 py-2 text-[10px] font-black uppercase tracking-[0.2em] transition ${mode === 'register' ? 'bg-[#f3d371] text-[#090814]' : 'text-gray-400'}`}
+            >
+              Register
+            </button>
+          </div>
+
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
+            {mode === 'register' && (
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-black tracking-[0.2em] text-[#5ce1e6] uppercase pl-1">
+                  Full Name
+                </label>
+                <div className="relative group/input">
+                  <input
+                    type="text"
+                    value={name || ''}
+                    onChange={(e) => setName && setName(e.target.value)}
+                    placeholder="Your full name"
+                    className="w-full bg-[#090814] border-2 border-[#222138] rounded-xl pl-4 pr-4 py-3.5 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-[#7c83fd] focus:ring-4 focus:ring-[#7c83fd]/10 transition-all duration-300 font-bold"
+                  />
+                </div>
+              </div>
+            )}
             
             <div className="space-y-1.5">
               <label className="block text-[10px] font-black tracking-[0.2em] text-[#5ce1e6] uppercase pl-1">
@@ -77,8 +109,8 @@ const Login = () => {
                 <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within/input:text-[#7c83fd] transition-colors" />
                 <input
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={email || ''}
+                  onChange={(e) => setEmail && setEmail(e.target.value)}
                   placeholder="admin@bucc.edu"
                   className="w-full bg-[#090814] border-2 border-[#222138] rounded-xl pl-12 pr-4 py-3.5 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-[#7c83fd] focus:ring-4 focus:ring-[#7c83fd]/10 transition-all duration-300 font-bold"
                 />
@@ -93,8 +125,8 @@ const Login = () => {
                 <KeyRound size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within/input:text-[#7c83fd] transition-colors" />
                 <input
                   type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={password || ''}
+                  onChange={(e) => setPassword && setPassword(e.target.value)}
                   placeholder="••••••••"
                   className="w-full bg-[#090814] border-2 border-[#222138] rounded-xl pl-12 pr-4 py-3.5 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-[#7c83fd] focus:ring-4 focus:ring-[#7c83fd]/10 transition-all duration-300"
                 />
@@ -104,16 +136,16 @@ const Login = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={submitting}
               className="w-full mt-4 bg-[#f3d371] hover:bg-[#fcdfa3] text-[#090814] font-black text-xs tracking-[0.3em] uppercase py-5 rounded-xl border-2 border-black shadow-[0_8px_24px_rgba(243,211,113,0.2)] transition-all duration-300 hover:-translate-y-1 active:translate-y-0 disabled:opacity-50 cursor-pointer"
             >
-              {isSubmitting ? (
+              {submitting ? (
                 <div className="flex items-center justify-center gap-2">
                   <div className="w-4 h-4 border-2 border-[#090814] border-t-transparent rounded-full animate-spin"></div>
                   INITIALIZING...
                 </div>
               ) : (
-                'INITIATE ACCESS'
+                mode === 'register' ? 'CREATE ACCOUNT' : 'INITIATE ACCESS'
               )}
             </button>
           </form>
