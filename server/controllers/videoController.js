@@ -4,16 +4,18 @@ import Video from '../models/Video.js';
 // @route   POST /api/videos
 // @access  Private/Admin
 export const postVideo = async (req, res) => {
-  const { title, url } = req.body;
+  const { title, youtubeId, category, tags } = req.body;
 
-  if (!title || !url) {
-    return res.status(400).json({ message: 'Please provide both title and YouTube URL' });
+  if (!title || !youtubeId) {
+    return res.status(400).json({ message: 'Please provide both title and YouTube video ID' });
   }
 
   try {
     const video = await Video.create({
       title,
-      url,
+      youtubeId,
+      category: category || 'General',
+      tags: tags || [],
       postedBy: req.user._id,
     });
 
@@ -33,6 +35,34 @@ export const getVideos = async (req, res) => {
       .sort({ createdAt: -1 });
 
     res.json(videos);
+  } catch (error) {
+    res.status(500).json({ message: `Server Error: ${error.message}` });
+  }
+};
+
+// @desc    Update an existing video
+// @route   PUT /api/videos/:id
+// @access  Private/Admin
+export const updateVideo = async (req, res) => {
+  const { title, youtubeId, category, tags } = req.body;
+
+  try {
+    const video = await Video.findById(req.params.id);
+
+    if (!video) {
+      return res.status(404).json({ message: 'Video not found' });
+    }
+
+    // Update fields if provided in request
+    video.title = title || video.title;
+    video.youtubeId = youtubeId || video.youtubeId;
+    video.category = category || video.category;
+    if (tags !== undefined) {
+      video.tags = tags;
+    }
+
+    const updatedVideo = await video.save();
+    res.json(updatedVideo);
   } catch (error) {
     res.status(500).json({ message: `Server Error: ${error.message}` });
   }

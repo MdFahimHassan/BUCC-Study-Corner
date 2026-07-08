@@ -118,7 +118,8 @@ All requests should be prefixed with the server's base URL (e.g., `http://localh
 | Method | Endpoint | Access | Description | Request Body Payload |
 | :--- | :--- | :--- | :--- | :--- |
 | **GET** | `/api/videos` | Public | Get all posted videos | None |
-| **POST** | `/api/videos` | Private (Admin) | Post a new YouTube video link | `{ "title": "...", "url": "https://youtube.com/..." }` *Requires Bearer Token* |
+| **POST** | `/api/videos` | Private (Admin) | Post a new YouTube video link | `{ "title": "...", "youtubeId": "dQw4w9WgXcQ", "category": "...", "tags": ["..."] }` *Requires Bearer Token* |
+| **PUT** | `/api/videos/:id` | Private (Admin) | Update video details | `{ "title": "...", "youtubeId": "...", "category": "...", "tags": ["..."] }` *Requires Bearer Token* |
 | **DELETE** | `/api/videos/:id` | Private (Admin) | Delete a posted video by database ID | *Requires Bearer Token* |
 
 ---

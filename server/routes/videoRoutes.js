@@ -2,6 +2,7 @@ import express from 'express';
 import {
   postVideo,
   getVideos,
+  updateVideo,
   deleteVideo,
 } from '../controllers/videoController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
@@ -13,6 +14,7 @@ router.route('/')
   .post(protect, admin, postVideo);
 
 router.route('/:id')
+  .put(protect, admin, updateVideo)
   .delete(protect, admin, deleteVideo);
 
 export default router;

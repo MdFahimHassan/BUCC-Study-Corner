@@ -7,14 +7,24 @@ const videoSchema = new mongoose.Schema(
       required: [true, 'Please add a video title'],
       trim: true,
     },
-    url: {
+    youtubeId: {
       type: String,
-      required: [true, 'Please add a YouTube video URL'],
+      required: [true, 'Please add a YouTube video ID'],
       trim: true,
       match: [
-        /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/,
-        'Please add a valid YouTube URL',
+        /^[a-zA-Z0-9_-]{11}$/,
+        'Please add a valid 11-character YouTube video ID',
       ],
+    },
+    category: {
+      type: String,
+      required: [true, 'Please add a video category'],
+      trim: true,
+      default: 'General',
+    },
+    tags: {
+      type: [String],
+      default: [],
     },
     postedBy: {
       type: mongoose.Schema.Types.ObjectId,
