@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import Video from '../models/Video.js';
 
 // @desc    Post a new video
@@ -55,3 +56,36 @@ export const deleteVideo = async (req, res) => {
     res.status(500).json({ message: `Server Error: ${error.message}` });
   }
 };
+=======
+const Video = require('../models/Video');
+
+// GET /api/videos
+exports.getVideos = async (req, res) => {
+    try {
+        const videos = await Video.find().sort({ createdAt: -1 }); // Newest videos first
+        res.status(200).json(videos);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+//  POST /api/videos (With URL Validation)
+exports.addVideo = async (req, res) => {
+    try {
+        const { title, youtubeUrl, category } = req.body;
+
+        // Day 2 Task: YouTube URL schema validation regex
+        const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+        if (!youtubeRegex.test(youtubeUrl)) {
+            return res.status(400).json({ message: 'Validation failed: Please provide a valid YouTube link.' });
+        }
+
+        const newVideo = new Video({ title, youtubeUrl, category });
+        await newVideo.save();
+        
+        res.status(201).json(newVideo);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+};
+>>>>>>> Stashed changes

@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import mongoose from 'mongoose';
 
 const videoSchema = new mongoose.Schema(
@@ -30,3 +31,23 @@ const videoSchema = new mongoose.Schema(
 const Video = mongoose.model('Video', videoSchema);
 
 export default Video;
+=======
+const mongoose = require('mongoose');
+
+const videoSchema = new mongoose.Schema({
+    title: { 
+        type: String, 
+        required: [true, 'Video title is required'] 
+    },
+    youtubeUrl: { 
+        type: String, 
+        required: [true, 'YouTube URL is required'] 
+    },
+    category: { 
+        type: String, 
+        default: 'General' 
+    }
+}, { timestamps: true });
+
+module.exports = mongoose.model('Video', videoSchema);
+>>>>>>> Stashed changes
